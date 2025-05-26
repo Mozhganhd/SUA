@@ -52,20 +52,23 @@ sum_{i in G_k} x_i >= beta * sum_{i in G_k} O_i    for all groups k
 
 ## Folder Structure
 ```
-SUA_Optimization/
-├── data/
-│   └── Input_SUA.xlsx                 # Provided data
-├── results/                           # Output folder
-├── src/
-│   ├── SLSQP_nogroupconstraint.py
-│   ├── SLSQP_hardConstraint.py
-│   ├── SLSQP_penaltyConstraints.py
-│   ├── SLSQP_SoftConstraints.py
+SUA-main/
+├── README.md                      # Project description and instructions
+├── requirements.txt               # Required Python packages
+├── src/                           # Python scripts implementing various optimization strategies
 │   ├── L-BFGS-B_penalty.py
 │   ├── PSO.py
-├── README.md
-├── requirements.txt
-└── streamlit_app.py
+│   ├── SLSQP_SoftConstraints.py
+│   ├── SLSQP_hardConstraint.py
+│   ├── SLSQP_nogroupconstraint.py
+│   └── SLSQP_penatlyConstraints.py
+├── results/                       # Output results from each optimization run
+│   ├── SLSQP_SoftConstraints/
+│   ├── SLSQP_hardConstraint/
+│   ├── SLSQP_nogroupconstraint/
+│   ├── SLSQP_penatlyConstraints/
+│   ├── lbfgsb_results/
+│   └── pso_results/
 ```
 
 ---
@@ -87,7 +90,7 @@ SUA_Optimization/
 ### 3. `SLSQP_penaltyConstraints.py`
 - **Approach**: Replaced hard constraints with penalty terms added to the objective for each group under-supplied.
 - **Penalty Term**: `penalty += (group_need - group_surplus)^2` when surplus < overflow.
-- **Outcome**: Improved convergence on small-scale tests (first 100 products). Scaling to the full dataset again caused convergence issues.
+- **Outcome**: Improved convergence on small-scale tests (first 100 products). Scaling to the full dataset again caused convergence issues and slow down the speed.
 
 ### 4. `SLSQP_softConstraints.py`
 - **Approach**: Applied a relaxed constraint strategy where groups must receive only a fraction (e.g., 30%) of their overflow.
@@ -147,6 +150,26 @@ openpyxl
 
 ```
 
+---
+
+## 📁 Code Overview
+
+All source code is located in the `src/` directory. Each script implements a different optimization strategy:
+
+| Script | Description |
+|--------|-------------|
+| `SLSQP_nogroupconstraint.py` | Baseline using SLSQP with capacity and macro-level surplus constraints only. No group-level constraints. |
+| `SLSQP_hardConstraint.py` | Adds **hard constraints** ensuring each substitutability group receives surplus at least equal to its overflow. May face convergence issues. |
+| `SLSQP_penaltyConstraints.py` | Uses **penalty terms** instead of hard constraints for group coverage. Better convergence but allows some violation. |
+| `SLSQP_SoftConstraints.py` | Relaxes group constraint to a fractional coverage (e.g., 30% of overflow), balancing feasibility and accuracy. |
+| `L-BFGS-B_penalty.py` | Gradient-based optimizer (L-BFGS-B) with capacity bounds and penalty terms for group constraint violations. |
+| `PSO.py` | Applies **Particle Swarm Optimization** (`pyswarms`) with penalty-based constraint handling. Suitable for non-convex search spaces. |
+
+Each script outputs results to its own folder under `results/`, including:
+- `optimal_surplus_output.csv`: Final surplus allocation
+- `profit_distribution.png`: Histogram of simulated profit outcomes
+- `surplus_per_product.png`: Surplus assigned per product
+  
 ---
 
 ## Final Notes
