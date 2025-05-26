@@ -1,3 +1,8 @@
+---
+layout: default
+math: true
+---
+
 # Surplus Unit Allocation Optimization
 
 ## Project Overview
@@ -8,6 +13,44 @@ This project addresses a **stochastic surplus allocation optimization problem** 
 3. Group-level **substitutability constraints**, ensuring sufficient surplus coverage within each group
 
 I implemented and compared multiple optimization strategies to explore trade-offs between convergence, interpretability, and constraint satisfaction.
+
+---
+
+## 📊 Problem Definition
+
+### Variables and Parameters
+- `n`: Number of products  
+- `x_i`: Surplus units added to product `i` (decision variable)  
+- `D_i`: Forecasted demand for product `i`  
+- `M_i`: Margin per unit (net price - COGS) for product `i`  
+- `C_i`: Maximum surplus capacity for product `i`  
+- `G_k`: Set of products belonging to substitutability group `k`  
+- `alpha`: Macro surplus limit fraction (e.g., 0.2 for 20%)  
+- `O_i = max(E[~D_i] - D_i, 0)`: Overflow demand, where `~D_i` is simulated from Burr distribution
+
+### Objective
+**Maximize total expected profit:**
+
+```text
+maximize:    sum_i [ M_i * min(x_i, O_i) ]
+```
+
+### Subject to
+
+**Capacity Constraint (per product):**
+```text
+0 <= x_i <= C_i    for all i
+```
+
+**Macro Surplus Cap:**
+```text
+sum_i x_i <= alpha * sum_i D_i
+```
+
+**Substitutability Group Coverage:**
+```text
+sum_{i in G_k} x_i >= beta * sum_{i in G_k} O_i    for all groups k
+```
 
 ---
 
@@ -92,9 +135,8 @@ $ python src/SLSQP_penaltyConstraints.py
 $ python src/SLSQP_SoftConstraints.py
 $ python src/L-BFGS-B_penalty.py
 $ python src/PSO.py
-# # Optional: Launch Streamlit UI
-# $ streamlit run streamlit_app.py
-# ```
+
+```
 
 ---
 
@@ -106,7 +148,7 @@ matplotlib
 scipy
 pyswarms
 openpyxl
-<!-- streamlit -->
+
 ```
 
 ---
