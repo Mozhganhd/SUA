@@ -1,7 +1,3 @@
----
-layout: default
-math: true
----
 
 # Surplus Unit Allocation Optimization
 
