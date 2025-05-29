@@ -55,6 +55,7 @@ sum_{i in G_k} x_i >= beta * sum_{i in G_k} O_i    for all groups k
 SUA-main/
 ├── README.md                      # Project description and instructions
 ├── requirements.txt               # Required Python packages
+├── app.py 
 ├── src/                           # Python scripts implementing various optimization strategies
 │   ├── L-BFGS-B_penalty.py
 │   ├── PSO.py
@@ -147,7 +148,7 @@ matplotlib
 scipy
 pyswarms
 openpyxl
-
+streamlit
 ```
 
 ---
